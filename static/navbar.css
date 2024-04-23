@@ -1,0 +1,89 @@
+/* Apply styles to the navigation bar */
+nav {
+  background: white;
+  width: 100%; /* Set width to 100% to span the entire page */
+  display: flex;
+  justify-content: space-between;
+  padding: 10px; /* Increased padding for better spacing */
+  border-radius: 22px;
+  box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.3);
+  align-items: center; /* Align items vertically */
+  flex-wrap: wrap; /* Allow items to wrap to next line on smaller screens */
+}
+
+/* Apply styles to the logo */
+.logo {
+  font-size: 1.5rem;
+  color: black;
+  text-decoration: none;
+  flex: 1; /* Allow logo to grow and shrink as needed */
+}
+
+/* Apply styles to the search box */
+.search {
+  display: flex;
+  align-items: center;
+  flex: 2; /* Allow search box to grow and shrink as needed */
+  margin-right: 10px; /* Add margin for better spacing */
+}
+
+.search input[type="text"] {
+  flex: 3; /* Allow input to take up more space */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%; /* Take up full width of container */
+}
+
+.search button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  background: #67a9f0;
+  color: white;
+  cursor: pointer;
+}
+
+.search button:hover {
+  background: #24568f;
+}
+
+/* Apply styles to the account dropdown */
+.account {
+  position: relative;
+  flex: 1; /* Allow account dropdown to grow and shrink as needed */
+}
+
+/* Apply styles to the dropdown content */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 120px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  color: black;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 22px;
+}
+
+/* Apply styles to the dropdown links */
+.dropdown-content a {
+  color: black;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 22px;
+}
+
+/* Apply styles to the dropdown links on hover */
+.dropdown-content a:hover {
+  transition: 0.25s;
+  background-color: #67a9f0;
+  color: white;
+}
+
+/* Show the dropdown content on hover */
+.account:hover .dropdown-content {
+  display: block;
+}

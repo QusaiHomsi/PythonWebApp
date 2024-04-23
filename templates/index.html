@@ -1,35 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guest Dashboard</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='seller.css') }}"
     />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}My Website{% endblock %}</title>
-    <!-- Additional head content can be added here -->
+    <style>
+      /* Set the maximum width and height of images within ul */
+      ul img {
+        max-width: 200px;
+        max-height: 150px;
+        display: block; /* Ensure the image is block-level to center it */
+        margin: 0 auto; /* Center the image */
+      }
+
+      .button-container {
+        text-align: center; /* Center the buttons horizontally */
+        margin-top: 10px; /* Add some space between the image and buttons */
+      }
+
+      .delete-container {
+        display: inline-block; /* Ensure the container only takes up the space it needs */
+      }
+
+      button.delete,
+      button.confirm-delete {
+        /* Your existing button styles */
+        padding: 5px 10px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        outline: none;
+        width: auto;
+        height: auto;
+        transition: background-color 0.3s;
+      }
+
+      button.delete {
+        background-color: #ff6347; /* Coral color */
+        color: white;
+      }
+
+      button.confirm-delete {
+        display: none;
+        background-color: #32cd32; /* Lime green color */
+        color: white;
+      }
+
+      button.confirm-delete.show {
+        display: inline-block;
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <h1>{% block header %}Welcome to My Website{% endblock %}</h1>
-      <!-- Additional header content can be added here -->
-    </header>
+    {% include 'navbar.html' %}
+    <h1>Guest Dashboard</h1>
+    <div>
+      <h2>Products added by Sellers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Seller</th>
+            <th>Seller Phone</th>
+            <th>Product Image</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product, user in products_with_users %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.phonenumber }}</td>
+            <td>
+              {% if product.photo %}
+              <img
+                src="{{ url_for('static', filename='uploads/' + product.photo) }}"
+                alt="Product Image"
+              />
+              {% else %} No image available {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <form action="{{ url_for('guest_exit') }}" method="POST">
+        <button type="submit">Exit</button>
+      </form>
+    </div>
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    <p>
+      Don't have an account? <a href="{{ url_for('register') }}">Register</a>
+    </p>
 
-    <nav>
-      <!-- Navigation links or menu can be added here -->
-    </nav>
+    <script>
+      function searchProducts() {
+        event.preventDefault(); // Prevent form submission
+        var searchTerm = document.getElementById("searchInput").value;
 
-    <main>
-      <p>
-        Don't have an account? <a href="{{ url_for('register') }}">Register</a>
-      </p>
-      <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
-    </main>
+        // Send AJAX request to Flask route
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/search_products", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            var products = JSON.parse(xhr.responseText);
+            displayProducts(products);
+          }
+        };
+        xhr.send(JSON.stringify({ searchTerm: searchTerm }));
+      }
 
-    <footer>
-      <!-- Footer content can be added here -->
-      <p>&copy; 2023 My Website</p>
-    </footer>
+      function displayProducts(products) {
+        // Clear previous search results
+        var tableBody = document.querySelector("tbody");
+        tableBody.innerHTML = "";
+
+        // Add search results to table
+        products.forEach(function (product) {
+          var row =
+            "<tr>" +
+            "<td>" +
+            product.name +
+            "</td>" +
+            "<td>" +
+            product.quantity +
+            "</td>" +
+            "<td>" +
+            product.price +
+            "</td>" +
+            "<td>" +
+            product.user.name +
+            "</td>" +
+            "<td>" +
+            product.user.phonenumber +
+            "</td>" +
+            "<td><img src='{{ url_for('static', filename='uploads/') }}" +
+            product.photo +
+            "' alt='Product Image'></td>" +
+            "</tr>";
+          tableBody.innerHTML += row;
+        });
+      }
+    </script>
   </body>
 </html>

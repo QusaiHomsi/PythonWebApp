@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -6,21 +6,10 @@ import os
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from datetime import datetime
-from random import *
+from flask import jsonify
+
 
 app = Flask(__name__)
-mail = Mail(app)
-
-# Configuration for email
-app.config["MAIL_SERVER"] = 'smtp.fastmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'b2twob@fastmail.com'
-app.config['MAIL_PASSWORD'] = 'f56p3j9cx38p279p'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_DEBUG'] = True
-
-
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -44,7 +33,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='customer')
     phonenumber = db.Column(db.String(20), nullable=True)
-    verified = db.Column(db.Boolean, default=False)
 
     def set_email(self, email):
         self.email = email.lower()
@@ -61,9 +49,11 @@ class Product(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    products_with_users = db.session.query(Product, User).join(User).all()
+    return render_template('index.html', products_with_users=products_with_users)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -82,52 +72,9 @@ def register():
             new_user = User(name=name, email=email, password=hashed_password, role=role, phonenumber=phonenumber)
             db.session.add(new_user)
             db.session.commit()
-            
-            # Generate OTP and send verification email
-            otp = randint(1000, 9999)
-            session['otp'] = otp
-            if send_verification_email(email, otp):
-                flash('Registration successful! Please check your email for verification.', 'success')
-                return redirect(url_for('login'))
-            else:
-                flash('Failed to send verification email. Please try again later.', 'error')
+            flash('Registration successful! You can now log in.', 'success')
+            return redirect(url_for('login'))
     return render_template('register.html')
-
-def send_verification_email(email, otp):
-    try:
-        msg = Message('Email Verification', sender='b2twob@fastmail.com', recipients=[email])
-        msg.body = f'Your verification code is: {otp}'
-        mail.send(msg)
-        return True
-    except Exception as e:
-        print("Error sending verification email:", e)
-        return False
-
-@app.route('/verify_email', methods=['POST'])
-def verify_email():
-    email = request.form.get('email')
-    otp = session.get('otp')
-    if email and otp:
-        if send_verification_email(email, otp):
-            flash('Verification email resent. Please check your email.', 'success')
-        else:
-            flash('Failed to resend verification email. Please try again later.', 'error')
-    else:
-        flash('Email address or OTP is missing.', 'error')
-    return redirect(url_for('login'))
-
-@app.route('/verify', methods=['POST'])
-def verify():
-    user_otp = request.form["otp"]
-    stored_otp = session.get('otp')
-    if user_otp == str(stored_otp):
-        email = request.form["email"]
-        user = User.query.filter_by(email=email).first()
-        user.verified = True
-        db.session.commit()
-        return jsonify({"message": "Email verified successfully!"})
-    else:
-        return jsonify({"message": "Invalid OTP!"})
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -137,15 +84,15 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
-            if user.verified:
-                login_user(user)
-                flash('Login successful!', 'success')
-                if user.role == 'seller':
-                    return redirect(url_for('seller_dashboard'))
-                elif user.role == 'customer':
-                    return redirect(url_for('customer_dashboard'))
+            login_user(user)
+            flash('Login successful!', 'success')
+            if user.role == 'seller':
+                return redirect(url_for('seller_dashboard'))
+            elif user.role == 'customer':
+                return redirect(url_for('customer_dashboard'))
             else:
-                flash('Email not verified. Please verify your email.', 'error')
+                flash('Invalid user role.', 'error')
+                return redirect(url_for('login'))
         else:
             flash('Invalid email or password. Please try again.', 'error')
     return render_template('login.html')
@@ -170,10 +117,6 @@ def customer_dashboard():
         flash('Please log in first', 'info')
         return redirect(url_for('login'))
 
-@app.route('/guest_dashboard', methods=['GET', 'POST'])
-def guest_dashboard():
-    products_with_users = db.session.query(Product, User).join(User).all()
-    return render_template('guest_dashboard.html', products_with_users=products_with_users)
 
 @app.route('/add_product', methods=['POST'])
 @login_required
@@ -241,6 +184,34 @@ def guest_exit():
     logout_user()
     flash('Exited', 'success')
     return redirect(url_for('login'))
+@app.route('/search_products', methods=['POST'])
+def search_products():
+    data = request.get_json()
+    search_term = data['searchTerm']
+    filtered_products = db.session.query(Product, User).join(User).filter(Product.name.ilike(f'%{search_term}%')).all()
+    products_data = [{
+        'name': product.name,
+        'quantity': product.quantity,
+        'price': product.price,
+        'user': {
+            'name': user.name,
+            'phonenumber': user.phonenumber
+        },
+        'photo': product.photo
+    } for product, user in filtered_products]
+    return jsonify(products_data)
+@app.route('/search')
+def search():
+    query = request.args.get('q')
+    # Implement your search logic here
+    # You can query your database or perform any search operation
+    # For demonstration, let's just return a dummy response
+    search_results = [
+        {'name': 'Product 1', 'price': 10},
+        {'name': 'Product 2', 'price': 20},
+        # Add more search results as needed
+    ]
+    return jsonify(search_results)
 
 if __name__ == '__main__':
     with app.app_context():

@@ -57,6 +57,27 @@
     </style>
   </head>
   <body>
+    <nav>
+      <div class="logo">Logo</div>
+      <div class="search">
+        <form id="searchForm" onsubmit="searchProducts(); return false;">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search products by name"
+          />
+          <button type="submit">Search</button>
+        </form>
+      </div>
+
+      <div class="account">
+        <button id="accountBtn">Account</button>
+        <div class="dropdown-content" id="dropdownContent">
+          <a href="#">Account Settings</a>
+          <a href="#">Logout</a>
+        </div>
+      </div>
+    </nav>
     <h1>Seller Dashboard</h1>
     <form
       class="sellerform"
@@ -128,11 +149,54 @@
         var form = button.parentNode;
         form.submit(); // Submit the delete form
       }
+      function handleSearchInput() {
+        var searchInput = document.getElementById("searchInput").value;
+        if (searchInput.trim() === "") {
+          // If the search input is empty, you can handle it here
+          // For example, clear the search results or display a message
+          return;
+        }
+        // Perform the search
+        searchProducts();
+      }
+
+      // Function to send search request to the server
+      function searchProducts() {
+        var searchInput = document.getElementById("searchInput").value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/search?q=" + encodeURIComponent(searchInput), true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+            // Update the page with search results
+            // For simplicity, let's assume the search results are returned as JSON
+            var searchResults = JSON.parse(xhr.responseText);
+            // Update your page with the search results as needed
+            // For example, display search results in a div
+            var searchResultsDiv = document.getElementById("searchResults");
+            searchResultsDiv.innerHTML = ""; // Clear previous results
+            for (var i = 0; i < searchResults.length; i++) {
+              var result = searchResults[i];
+              // Create a div element for each search result
+              var resultDiv = document.createElement("div");
+              resultDiv.textContent =
+                "Name: " + result.name + ", Price: " + result.price;
+              searchResultsDiv.appendChild(resultDiv);
+            }
+          }
+        };
+        xhr.send();
+      }
+
+      // Add event listener to search input field to trigger search on input change
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", handleSearchInput);
     </script>
     <div>
-      <form action="{{ url_for('guest_dashboard') }}" method="POST">
+      <form action="{{ url_for('index') }}" method="POST">
         <h3>Click here to browse all products listed</h3>
         <button type="submit">All Items Listed</button>
       </form>
+    </div>
   </body>
 </html>

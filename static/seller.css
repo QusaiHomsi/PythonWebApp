@@ -1,121 +1,33 @@
 /* Set the maximum width and height of images within ul */
 ul img {
-  max-width: 200px;
-  max-height: 150px;
-}
-
-/* Styles for the delete button */
-button.delete {
-  position: relative;
-  width: 50px; /* Initial width */
-  height: 50px; /* Initial height */
-  border-radius: 25px;
-  border: 2px solid rgb(231, 50, 50);
-  background-color: #fff;
-  cursor: pointer;
-  box-shadow: 0 0 10px #333;
-  overflow: hidden;
-  transition: 0.3s;
-}
-
-/* Hover effect for the delete button */
-button.delete:hover {
-  background-color: rgb(245, 207, 207);
-  transform: scale(1.2);
-  box-shadow: 0 0 4px #111;
-}
-
-/* Styles for the SVG icon inside the delete button */
-button.delete svg {
-  color: rgb(231, 50, 50);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: 0.3s;
-}
-
-/* Hide the SVG icon inside the delete button when focused */
-button.delete:focus svg {
-  opacity: 0;
-}
-
-/* Styles for the confirmation text inside the delete button */
-button.delete span {
-  width: 150px;
-  position: absolute;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  color: rgb(231, 50, 50);
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-/* Show the confirmation text inside the delete button when focused */
-button.delete:focus span {
-  opacity: 1;
-}
-
-/* Adjust dimensions of the delete button when focused */
-button.delete:focus {
-  width: 150px;
-  height: 50px;
-}
-/*/////////////\\\\\\\\\\\\\//////////\//////\/\/\/\/\\\\\\/\/\/\//*/
-/* Set the maximum width and height of images within ul */
-ul img {
-  max-width: 200px;
-  max-height: 150px;
+  max-width: 100%;
+  height: auto;
 }
 
 /* Reset default margin and padding for the body */
 html,
 body {
-  align-items: center;
   background: #f2f4f8;
-  display: flex;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  justify-content: center;
   margin: 0;
   padding: 0;
-  flex-direction: column; /* Stack elements vertically */
+  text-align: center;
 }
-
+ul {
+  list-style-type: none; /* Remove bullets */
+}
 /* Styles for the form */
-form .sellerform {
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.125rem;
-  box-shadow: 0 1rem 1rem -0.75rem rgba(0, 0, 0, 0.125);
-  padding: 1rem;
-  margin-bottom: 2rem; /* Add margin to separate form from other content */
-  width: 100%; /* Ensure form takes full width */
-  max-width: 400px; /* Limit form width */
+form {
   display: flex;
-  flex-direction: column; /* Stack form items vertically */
-  align-items: center; /* Center form items horizontally */
+  flex-direction: column;
+  align-items: center;
 }
-form .delete {
-  background: transparent;
 
-  border-radius: 20px;
-  box-shadow: 0 1rem 1rem -0.75rem rgba(0, 0, 0, 0.125);
-
-  margin-bottom: 2rem; /* Add margin to separate form from other content */
-
-  display: flex;
-  flex-direction: column; /* Stack form items vertically */
-  align-items: center; /* Center form items horizontally */
-}
-/* Styles for form labels */
 form label {
   color: #666;
   font-size: 0.825rem;
-  margin-bottom: 0.25rem; /* Reduce margin bottom for better spacing */
+  margin-bottom: 0.25rem;
 }
 
-/* Styles for form inputs */
 form input[type="text"],
 form input[type="number"],
 form input[type="file"],
@@ -129,10 +41,10 @@ form button[type="submit"] {
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
   transition: all 0.25s;
-  width: 100%; /* Set input width to 100% */
+  width: 100%;
+  max-width: 300px; /* Adjust maximum width for better responsiveness */
 }
 
-/* Styles for form buttons */
 form button[type="submit"] {
   color: white;
   background: #573b8a;
@@ -140,15 +52,13 @@ form button[type="submit"] {
   font-weight: bold;
   margin-top: 0.625rem;
   text-transform: uppercase;
-  cursor: pointer; /* Add cursor pointer */
+  cursor: pointer;
 }
 
-/* Styles for form buttons on hover */
 form button[type="submit"]:hover {
   background: #6d44b8;
 }
 
-/* Styles for form buttons when active */
 form button[type="submit"]:active {
   background: #6d44b8;
   transition: all 0.125s;
@@ -158,16 +68,75 @@ form button[type="submit"]:active {
 h1 {
   color: #333;
   text-align: center;
-  margin-bottom: 2rem; /* Add margin bottom to separate heading from form */
+  margin-bottom: 2rem;
 }
-html,
-span .delete,
-body .delete {
-  align-items: center;
-  background: #f2f4f8;
+
+/* Apply styles to the navigation bar */
+nav {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
   display: flex;
-  font-family: Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  flex-direction: column; /* Stack elements vertically */
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allow items to wrap to next line on smaller screens */
+}
+
+/* Apply styles to the logo */
+.logo {
+  font-size: 1.5rem;
+}
+
+/* Apply styles to the search box */
+.search {
+  display: flex;
+  align-items: center;
+}
+
+.search input[type="text"] {
+  padding: 5px;
+  margin-right: 5px;
+  width: 100%; /* Take up remaining space */
+}
+
+.search button {
+  padding: 5px 10px;
+  background-color: #ddd;
+  border: none;
+  cursor: pointer;
+}
+
+/* Apply styles to the account dropdown */
+.account {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 120px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.account:hover .dropdown-content {
+  display: block;
+}
+/* Set the maximum width and height of images within ul */
+ul img,
+table img {
+  max-width: 200px;
+  max-height: 150px;
 }
