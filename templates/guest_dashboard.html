@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='seller.css') }}"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guest Dashboard</title>
+    <style>
+      /* Apply styles to images within the list */
+      img {
+        max-width: 200px; /* Set the maximum width of the image */
+        max-height: 150px; /* Set the maximum height of the image */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Guest Dashboard</h1>
+    <div>
+      <h2>Products added by Sellers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Seller</th>
+            <th>Seller Phone</th>
+            <th>Product Image</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product, user in products_with_users %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{user.phonenumber}}</td>
+            <td>
+              {% if product.photo %}
+              <img
+                src="{{ url_for('static', filename='uploads/' + product.photo) }}"
+                alt="Product Image"
+              />
+              {% else %} No image available {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <form action="{{ url_for('guest_exit') }}" method="POST">
+        <button type="submit">Exit</button>
+      </form>
+    </div>
+  </body>
+</html>

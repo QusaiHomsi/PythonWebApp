@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seller Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='seller.css') }}"
+    />
+
+    <style>
+      /* Set the maximum width and height of images within ul */
+      ul img {
+        max-width: 200px;
+        max-height: 150px;
+        display: block; /* Ensure the image is block-level to center it */
+        margin: 0 auto; /* Center the image */
+      }
+
+      .button-container {
+        text-align: center; /* Center the buttons horizontally */
+        margin-top: 10px; /* Add some space between the image and buttons */
+      }
+
+      .delete-container {
+        display: inline-block; /* Ensure the container only takes up the space it needs */
+      }
+
+      button.delete,
+      button.confirm-delete {
+        /* Your existing button styles */
+        padding: 5px 10px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        outline: none;
+        width: auto;
+        height: auto;
+        transition: background-color 0.3s;
+      }
+
+      button.delete {
+        background-color: #ff6347; /* Coral color */
+        color: white;
+      }
+
+      button.confirm-delete {
+        display: none;
+        background-color: #32cd32; /* Lime green color */
+        color: white;
+      }
+
+      button.confirm-delete.show {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Seller Dashboard</h1>
+    <form
+      class="sellerform"
+      action="{{ url_for('add_product') }}"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <label for="name">Product Name:</label><br />
+      <input type="text" id="name" name="name" required /><br /><br />
+      <label for="quantity">Quantity:</label><br />
+      <input type="number" id="quantity" name="quantity" required /><br /><br />
+      <label for="price">Price:</label><br />
+      <input
+        type="number"
+        id="price"
+        name="price"
+        step="0.01"
+        required
+      /><br /><br />
+      <label for="photo">Product Photo:</label><br />
+      <input type="file" id="photo" name="photo" /><br /><br />
+      <button type="submit">Add Product</button>
+    </form>
+
+    <h2>Your Products</h2>
+    <ul>
+      {% for product in products %}
+      <li>
+        <p>
+          {{ product.name }} - Quantity: {{ product.quantity }} - Price: {{
+          product.price }}
+        </p>
+        <img
+          src="{{ url_for('static', filename='uploads/' + product.photo) }}"
+          alt="Product Image"
+        />
+        <div class="button-container">
+          <div class="delete-container">
+            <button class="delete" onclick="showConfirmation(this)">
+              Delete
+            </button>
+            <form
+              class="delete"
+              action="{{ url_for('delete_product', product_id=product.id) }}"
+              method="POST"
+            >
+              <button class="confirm-delete" onclick="confirmDelete(this)">
+                Confirm Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <form action="{{ url_for('logout') }}" method="POST">
+      <button type="submit">Logout</button>
+    </form>
+
+    <script>
+      function showConfirmation(button) {
+        var confirmButton =
+          button.nextElementSibling.querySelector(".confirm-delete");
+        confirmButton.style.display = "inline-block"; // Show confirm delete button
+      }
+
+      function confirmDelete(button) {
+        var form = button.parentNode;
+        form.submit(); // Submit the delete form
+      }
+    </script>
+    <div>
+      <form action="{{ url_for('guest_dashboard') }}" method="POST">
+        <h3>Click here to browse all products listed</h3>
+        <button type="submit">All Items Listed</button>
+      </form>
+  </body>
+</html>

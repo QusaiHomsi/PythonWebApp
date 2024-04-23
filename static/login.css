@@ -1,0 +1,169 @@
+/* Set the maximum width and height of images within ul */
+ul img {
+  max-width: 200px;
+  max-height: 150px;
+}
+
+/* Styles for the delete button */
+button.delete {
+  position: relative;
+  width: 50px; /* Initial width */
+  height: 50px; /* Initial height */
+  border-radius: 25px;
+  border: 2px solid rgb(231, 50, 50);
+  background-color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #333;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+/* Hover effect for the delete button */
+button.delete:hover {
+  background-color: rgb(245, 207, 207);
+  transform: scale(1.2);
+  box-shadow: 0 0 4px #111;
+}
+
+/* Styles for the SVG icon inside the delete button */
+button.delete svg {
+  color: rgb(231, 50, 50);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 0.3s;
+}
+
+/* Hide the SVG icon inside the delete button when focused */
+button.delete:focus svg {
+  opacity: 0;
+}
+
+/* Styles for the confirmation text inside the delete button */
+button.delete span {
+  width: 150px;
+  position: absolute;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  color: rgb(231, 50, 50);
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+/* Show the confirmation text inside the delete button when focused */
+button.delete:focus span {
+  opacity: 1;
+}
+
+/* Adjust dimensions of the delete button when focused */
+button.delete:focus {
+  width: 150px;
+  height: 50px;
+}
+
+/* Reset default margin and padding for the body */
+html,
+body {
+  align-items: center;
+  background: #f2f4f8;
+  border: 0;
+  display: flex;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  height: 100%;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  flex-direction: column; /* Align items vertically */
+}
+
+/* Styles for the form */
+form {
+  --background: white;
+  --border: rgba(0, 0, 0, 0.125);
+  --borderDark: rgba(0, 0, 0, 0.25);
+  --borderDarker: rgba(0, 0, 0, 0.5);
+  --bgColorH: 0;
+  --bgColorS: 0%;
+  --bgColorL: 98%;
+  --fgColorH: 210;
+  --fgColorS: 50%;
+  --fgColorL: 38%;
+  --shadeDark: 0.3;
+  --shadeLight: 0.7;
+  --shadeNormal: 0.5;
+  --borderRadius: 0.125rem;
+  --highlight: #306090;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--borderRadius);
+  box-shadow: 0 1rem 1rem -0.75rem var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem; /* Add margin to separate form from other content */
+}
+
+/* Styles for form labels */
+form label {
+  color: hsl(var(--fgColorH), var(--fgColorS), var(--fgColorL));
+  font-size: 0.825rem;
+  margin-bottom: 0.25rem; /* Reduce margin bottom for better spacing */
+}
+
+/* Styles for form inputs */
+form input[type="text"],
+form input[type="number"],
+form input[type="file"],
+form button[type="submit"] {
+  border: 1px solid var(--border);
+  border-radius: var(--borderRadius);
+  box-sizing: border-box;
+  font-size: 1rem;
+  height: 2.25rem;
+  line-height: 1.25rem;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  width: 100%; /* Set input width to 100% */
+  transition: all 0.25s;
+}
+
+/* Styles for form buttons */
+form button[type="submit"] {
+  color: hsl(var(--bgColorH), var(--bgColorS), var(--bgColorL));
+  background: hsl(var(--fgColorH), var(--fgColorS), var(--fgColorL));
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-top: 0.625rem;
+  text-transform: uppercase;
+  cursor: pointer; /* Add cursor pointer */
+}
+
+/* Styles for form buttons on hover */
+form button[type="submit"]:hover {
+  background: hsl(
+    var(--fgColorH),
+    var(--fgColorS),
+    calc(var(--fgColorL) * 0.85)
+  );
+}
+
+/* Styles for form buttons when active */
+form button[type="submit"]:active {
+  background: hsl(
+    var(--fgColorH),
+    calc(var(--fgColorS) * 2),
+    calc(var(--fgColorL) * 1.15)
+  );
+  transition: all 0.125s;
+}
+
+/* Styles for seller dashboard heading */
+h1 {
+  color: hsl(var(--fgColorH), var(--fgColorS), var(--fgColorL));
+  text-align: center;
+  margin-bottom: 2rem; /* Add margin bottom to separate heading from form */
+}

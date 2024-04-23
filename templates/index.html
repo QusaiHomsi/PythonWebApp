@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='seller.css') }}"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}My Website{% endblock %}</title>
+    <!-- Additional head content can be added here -->
+  </head>
+  <body>
+    <header>
+      <h1>{% block header %}Welcome to My Website{% endblock %}</h1>
+      <!-- Additional header content can be added here -->
+    </header>
+
+    <nav>
+      <!-- Navigation links or menu can be added here -->
+    </nav>
+
+    <main>
+      <p>
+        Don't have an account? <a href="{{ url_for('register') }}">Register</a>
+      </p>
+      <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </main>
+
+    <footer>
+      <!-- Footer content can be added here -->
+      <p>&copy; 2023 My Website</p>
+    </footer>
+  </body>
+</html>
