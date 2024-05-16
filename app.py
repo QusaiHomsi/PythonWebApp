@@ -1,13 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import os
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message
 from datetime import datetime
-from flask import jsonify
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -15,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Create the uploads directory if it doesn't exist
-uploads_dir = os.path.join('static', 'uploads')
+uploads_dir = os.path.join(app.root_path, 'static','uploads')
 os.makedirs(uploads_dir, exist_ok=True)
 
 # Configure the UPLOAD_FOLDER
@@ -23,6 +20,7 @@ UPLOAD_FOLDER = uploads_dir
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -49,12 +47,6 @@ class Product(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    products_with_users = db.session.query(Product, User).join(User).all()
-    return render_template('index.html', products_with_users=products_with_users)
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -68,7 +60,7 @@ def register():
         if existing_user:
             flash('Email already exists. Please choose a different one.', 'error')
         else:
-            hashed_password = generate_password_hash(password)
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
             new_user = User(name=name, email=email, password=hashed_password, role=role, phonenumber=phonenumber)
             db.session.add(new_user)
             db.session.commit()
@@ -83,7 +75,7 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password, password):
+        if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             flash('Login successful!', 'success')
             if user.role == 'seller':
@@ -117,6 +109,10 @@ def customer_dashboard():
         flash('Please log in first', 'info')
         return redirect(url_for('login'))
 
+@app.route('/')
+def guest_dashboard():
+    products_with_users = db.session.query(Product, User).join(User).all()
+    return render_template('index.html', products_with_users=products_with_users)
 
 @app.route('/add_product', methods=['POST'])
 @login_required
@@ -179,11 +175,6 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
 
-@app.route('/guest_exit', methods=['POST'])
-def guest_exit():
-    logout_user()
-    flash('Exited', 'success')
-    return redirect(url_for('login'))
 @app.route('/search_products', methods=['POST'])
 def search_products():
     data = request.get_json()
@@ -200,18 +191,6 @@ def search_products():
         'photo': product.photo
     } for product, user in filtered_products]
     return jsonify(products_data)
-@app.route('/search')
-def search():
-    query = request.args.get('q')
-    # Implement your search logic here
-    # You can query your database or perform any search operation
-    # For demonstration, let's just return a dummy response
-    search_results = [
-        {'name': 'Product 1', 'price': 10},
-        {'name': 'Product 2', 'price': 20},
-        # Add more search results as needed
-    ]
-    return jsonify(search_results)
 
 if __name__ == '__main__':
     with app.app_context():

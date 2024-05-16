@@ -57,27 +57,7 @@
     </style>
   </head>
   <body>
-    <nav>
-      <div class="logo">Logo</div>
-      <div class="search">
-        <form id="searchForm" onsubmit="searchProducts(); return false;">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Search products by name"
-          />
-          <button type="submit">Search</button>
-        </form>
-      </div>
-
-      <div class="account">
-        <button id="accountBtn">Account</button>
-        <div class="dropdown-content" id="dropdownContent">
-          <a href="#">Account Settings</a>
-          <a href="#">Logout</a>
-        </div>
-      </div>
-    </nav>
+    {% include 'navbar.html' %}
     <h1>Seller Dashboard</h1>
     <form
       class="sellerform"
@@ -193,7 +173,7 @@
         .addEventListener("input", handleSearchInput);
     </script>
     <div>
-      <form action="{{ url_for('index') }}" method="POST">
+      <form action="{{ url_for('customer_dashboard') }}" method="POST">
         <h3>Click here to browse all products listed</h3>
         <button type="submit">All Items Listed</button>
       </form>
